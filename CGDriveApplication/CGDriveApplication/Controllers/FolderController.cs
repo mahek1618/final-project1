@@ -15,7 +15,7 @@ namespace CGDriveApplication.Controllers
     {
         private readonly CG_DocsContext _cgfolder;
         private readonly CG_DocsContext _cgDocument;
-        public FolderController(CG_DocsContext cgfolder,CG_DocsContext cgDocument)
+        public FolderController(CG_DocsContext cgfolder, CG_DocsContext cgDocument)
         {
             _cgfolder = cgfolder;
             _cgDocument = cgDocument;
@@ -32,18 +32,30 @@ namespace CGDriveApplication.Controllers
         [HttpGet("FolderId")]
         public IActionResult Get(int id)
         {
-            
-            
-                var getFid = _cgfolder.Folder.Where(o => o.FCreatedBy == id && o.IsDeleted == false);
-                return Ok(getFid);
-            
+            var getFid = _cgfolder.Folder.Where(o => o.FCreatedBy == id && o.IsDeleted == false);
+            return Ok(getFid);
+
         }
 
         [HttpGet("Trash")]
         public IActionResult GetTrash(int id)
         {
-            var getfid= _cgfolder.Folder.Where(o => o.FCreatedBy == id && o.IsDeleted == true);
+            var getfid = _cgfolder.Folder.Where(o => o.FCreatedBy == id && o.IsDeleted == true);
             return Ok(getfid);
+        }
+        [HttpGet("favorite")]
+        public IActionResult Getfav(int id)
+        {
+            var getfav = _cgfolder.Folder.Where(o => o.FCreatedBy == id && o.IsFavourite == true);
+            return Ok(getfav);
+        }
+
+        [HttpGet("Recent")]
+        public IActionResult GetRecentFolder(int id)
+        {
+            var createdAt = DateTime.Now.AddMinutes(-30);
+            var res = _cgfolder.Folder.Where(o => o.FCreatedAt >= createdAt && o.FCreatedBy == id && o.IsDeleted == false);
+            return Ok(res);
         }
         // POST: api/Folder
         [HttpPost]
@@ -68,27 +80,50 @@ namespace CGDriveApplication.Controllers
             foreach(var res in upfil)
             {
                 res.IsDeleted = true;
+                if(res.IsFavourite==true)
+                {
+                    res.IsFavourite = false;
+                }
                 _cgDocument.SaveChanges();
             }
             var upfol = _cgfolder.Folder.FirstOrDefault(o => o.FolderId == id);
-            upfol.IsDeleted = true; 
+            upfol.IsDeleted = true;
+            if (upfol.IsFavourite == true)
+            {
+                upfol.IsFavourite = false;
+            }
             _cgfolder.Folder.Update(upfol);
             _cgfolder.SaveChanges();
         }
-        //[HttpPut("favourites")]
-        //public void Put(int id)
-        //{
-        //    var favfil = _cgDocument.Documents.Where(o => o.FolDocId == id).ToList();
-        //    foreach (var res in favfil)
-        //    {
-        //        res.IsFavourite = true;
-        //        _cgDocument.SaveChanges();
-        //    }
-        //    var upfol = _cgfolder.Folder.FirstOrDefault(o => o.FolderId == id);
-        //    upfol.IsDeleted = true;
-        //    _cgfolder.Folder.Update(upfol);
-        //    _cgfolder.SaveChanges();
-        //}
+        [HttpPut("Restore")]
+        public void PutRestore(int id)
+        {
+            var refil = _cgDocument.Documents.Where(o => o.FolDocId == id).ToList();
+            foreach (var res in refil)
+            {
+                res.IsDeleted = false;
+                _cgDocument.SaveChanges();
+            }
+            var refol = _cgfolder.Folder.FirstOrDefault(o => o.FolderId == id);
+            refol.IsDeleted = false;
+            _cgfolder.Folder.Update(refol);
+            _cgfolder.SaveChanges();
+        }
+
+        [HttpPut("favourites")]
+        public void PutFav(int id)
+        {
+            var favfil = _cgDocument.Documents.Where(o => o.FolDocId == id).ToList();
+            foreach (var res in favfil)
+            {
+                res.IsFavourite = true;
+                _cgDocument.SaveChanges();
+            }
+            var favfol = _cgfolder.Folder.FirstOrDefault(o => o.FolderId == id);
+            favfol.IsFavourite = true;
+            _cgfolder.Folder.Update(favfol);
+            _cgfolder.SaveChanges();
+        }
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(int id)
@@ -102,7 +137,7 @@ namespace CGDriveApplication.Controllers
         [HttpGet("folder/{id}/{value}")]
         public IActionResult Get(int id, string value)
         {
-            var result = _cgfolder.Folder.Where(o => (o.FolderName.Contains(value) && o.FCreatedBy == id));
+            var result = _cgfolder.Folder.Where(o => (o.FolderName.Contains(value) && o.FCreatedBy == id && o.IsDeleted==false));
             return Ok(result);
         }
     }

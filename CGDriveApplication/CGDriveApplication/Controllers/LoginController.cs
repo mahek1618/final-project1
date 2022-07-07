@@ -27,20 +27,6 @@ namespace JWTEx.Controllers
             _config = config;
            _cg_docsContext=cg_docsContext;
     }
-        // GET: api/Login
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        // GET: api/Login/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
         // POST: api/Login
         [AllowAnonymous]
         [HttpPost]

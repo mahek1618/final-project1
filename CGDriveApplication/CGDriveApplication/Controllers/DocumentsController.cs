@@ -26,7 +26,7 @@ namespace CGDriveApplication.Controllers
         [HttpGet("onlyfile")]
         public IActionResult GetTrashonlyfile(int id)
         {
-            var getDoc = _cgDocument.Documents.Where(obj => obj.DCreatedBy == id && obj.IsDeleted==true);
+            var getDoc = _cgDocument.Documents.Where(obj => obj.DocId == id && obj.IsDeleted==true);
             return Ok(getDoc);
         }
         [HttpGet("{id:int}")]
@@ -107,6 +107,41 @@ namespace CGDriveApplication.Controllers
             }
             return Ok(new { count = files.Count, fsize });
         }
+        [HttpGet("TrashDocId")]
+        public IActionResult TrashGetById(int id)
+        {
+            try
+            {
+                var result = _cgDocument.Documents.Where(obj => obj.FolDocId == id && obj.IsDeleted == true);
+
+                if (result == null) return NotFound();
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error retrieving data from the database");
+            }
+        }
+        [HttpGet("favfolderfile")]
+        public IActionResult favfile(int id)
+
+        {
+            try
+            {
+                var favfil = _cgDocument.Documents.Where(obj => obj.FolDocId == id && obj.IsFavourite == true);
+
+                if (favfil == null) return NotFound();
+
+                return Ok(favfil);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error retrieving data from the database");
+            }
+        }
         //[HttpPost]
         //public IActionResult Download(int id)
         //{
@@ -151,23 +186,7 @@ namespace CGDriveApplication.Controllers
         //    }
         //}
 
-        [HttpGet("TrashDocId")]
-        public IActionResult TrashGetById(int id)
-        {
-            try
-            {
-                var result = _cgDocument.Documents.Where(obj => obj.FolDocId == id && obj.IsDeleted == true);
 
-                if (result == null) return NotFound();
-
-                return Ok(result);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
-            }
-        }
 
 
         [HttpPut("FileTrash")]
