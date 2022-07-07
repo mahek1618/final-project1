@@ -45,7 +45,7 @@ function listFiles()
      // const Fileid=file.DocId;
       // fold.style.backgroundColor = "red";
       console.log(filname);
-      fil.innerHTML =   `<i class="fa fa-folder fa-3x" aria-hidden="true">
+      fil.innerHTML =   `<i class="fa fa-folder fa-3x" aria-hidden="true" style="color:lightblue;">
       <a  style="font-size:20px;text-decoration: none;position: absolute;cursor: pointer; margin:20px">${filname}</a> 
       </i>
       <i class="fa fa-trash fa-1.5px" onclick="trashfile(${docid})" style="position:relative;left: 200px;bottom: 1px;">

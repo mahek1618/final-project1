@@ -3,22 +3,31 @@ body{
   font-family: 'Times New Roman', Times, serif;
   height: 1000px; 
   position: fixed;
-  background-color: rgb(100, 187, 187); 
+  background-color: rgb(255, 255, 255); 
       } 
 
 .polaroid{
   position: fixed;
 }
 
+.bg{
+  margin-top: 50px;
+}
+
+
 .container-1{
-  position: fixed;
-  left: 30%;
-  bottom: 20px;
-  top: 30px;
+ position:fixed;
+  left: 60%;
+  /* bottom: 20px; */
+  top:60px;
   padding: 40px 30px 30px 30px;
-  background-color: #ecf0f3;
-  border-radius: 25px;
+  background-color:white; 
   font-size: medium;
+  border: 1px solid;
+  border-radius: 5px;
+  
+  /* box-shadow: 8px 8px 8px 8px  skyblue;  */
+  height: 500px;
 }
 
 
@@ -27,40 +36,42 @@ body{
  /* Full-width input fields  */
 input[type=text], input[type=password] {
   width: 50%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
+  padding: 5px;
+  margin: 5px 0 25px 0;
   display: flex;
-  align-content: flex-end;
-  border-radius: 12px;
-  background: #f1f1f1; 
+  border-radius: 5px;
+  background: white; 
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  opacity: 0.6; 
 }
 
 input[type=text]:focus, input[type=password]:focus {
-   background-color: #ddd; 
-  outline: none;
+   background-color: white; 
+   outline: none;
 }
 
 
  /* Set a style for the signup button  */
 #signupbtn {
-  width: 50%;
+  width: 40%;
   padding: 12px;
   font-size: 14px;
-  background: #15C39A;
+  background: rgb(30, 30, 253);
   color: #fff;
   border: none;
   border-radius: 100px;
   cursor: pointer;
   font-family: 'Open Sans', sans-serif;
-  margin-top: -5px;
+  margin-top: 10px;
+  font-weight: bold;
   /* transition: background 0.2s ease-out; */
   margin-left: 90px;
 
 }
 
-.signupbtn:hover {
+#signupbtn:hover {
   opacity: 1;
+  background: lightskyblue;
 }
 
 
@@ -70,7 +81,7 @@ a {
 
 
 .signin {
-   background-color: #f1f1f1; 
+   background-color: white; 
   text-align: left;
 }
 
@@ -82,5 +93,5 @@ a {
 
 h1{
   margin-top: -20px;
-  margin-left: 130px;
+  margin-left: 100px;
 }

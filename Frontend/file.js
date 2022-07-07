@@ -113,38 +113,22 @@ fetch("http://localhost:58659/api/Documents/upload/"+folderid+"/"+userid+"/"+upl
     .then(response => response.json())
     .then((files) => {
       console.log(files);
+     
       files.forEach(file => {
       
   
       var filecreate = document.getElementById("filemain");
       var fil = document.createElement("div");
-      
-      fil.style.width ="260px";
-      fil.style.height = "116px";
-      fil.style.margin="20px","20px","20px","20px";
-       fil.style.background = "white";
-      fil.style.display="inline-grid";
-      fil.style.padding="20px";
-      fil.style.borderRadius="12px";
-      fil.style.color="#618f61";
-  
-  
-  
-  
-      // fol.setAttribute("id","stylefol");
-      // fol.setAttribute("style","height:100px","width:200px","background-color:blue","border-radius:12px","padding: 15px 14px");
+      fil.setAttribute("class", "filecs");
       const filname = file.docName;
       const docid=file.docId;
-     // const Fileid=file.DocId;
-      // fold.style.backgroundColor = "red";
       console.log(filname);
-      fil.innerHTML =   `<i class="fa fa-folder fa-3x" aria-hidden="true">
-      <a  style="font-size:20px;text-decoration: none;position: absolute;cursor: pointer; margin:20px">${filname}</a> 
-      </i>
-      <i class="fa fa-trash fa-1.5px" onclick="trashfile(${docid})" style="position:relative;left: 200px;bottom: 1px;">
+      console.log(docid);
+      fil.innerHTML =   `<a><i class="fa fa-folder fa-3x" aria-hidden="true" style="color:lightblue";></i></a><br />
+      <p  style="font-size:15px;text-decoration: none;position: absolute;cursor: pointer; margin-top:5%;color:black;font-weight:normal;overflow:hidden;">${filname}</p> 
+      
+      <i class="fa fa-trash fa-1.5px" onclick='swalfire(${docid})' style="position:relative;left: 100px;margin-top:10%;">
   </i>`;
-  
- 
      filecreate.appendChild(fil);
       });
     })
@@ -155,7 +139,28 @@ fetch("http://localhost:58659/api/Documents/upload/"+folderid+"/"+userid+"/"+upl
       console.log(err);
     }
   }
-  Location.reload();
+
+  function swalfire(docid){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          trashfile(docid),
+          'Deleted!',
+          'Your file has been deleted.',
+          'success'
+        )
+      }
+    })
+  }
+ 
   function trashfile(file)
 {
   var raw = "";
@@ -168,7 +173,7 @@ fetch("http://localhost:58659/api/Documents/upload/"+folderid+"/"+userid+"/"+upl
   
   fetch("http://localhost:58659/api/Documents/FileTrash?id="+file, requestOptions)
     .then(response => response.text())
-    .then(result => console.log(result))
+    .then(result =>console.log(result))
     .catch(error => console.log('error', error));
     sessionStorage.setItem("Documentid",file);
     location.reload();
@@ -192,28 +197,12 @@ function search()
   
       var filecreate = document.getElementById("filemain");
       var fil = document.createElement("div");
-      
-      fil.style.width ="260px";
-      fil.style.height = "116px";
-      fil.style.margin="20px","20px","20px","20px";
-       fil.style.background = "white";
-      fil.style.display="inline-grid";
-      fil.style.padding="20px";
-      fil.style.borderRadius="12px";
-      fil.style.color="#618f61";
-  
-  
-  
-  
-      // fol.setAttribute("id","stylefol");
-      // fol.setAttribute("style","height:100px","width:200px","background-color:blue","border-radius:12px","padding: 15px 14px");
+      fil.setAttribute("class","filecs");
       const filname = file.docName;
       const docid=file.docId;
-     // const Fileid=file.DocId;
-      // fold.style.backgroundColor = "red";
       console.log(filname);
-      fil.innerHTML =   `<i class="fa fa-folder fa-3x" aria-hidden="true">
-      <a  style="font-size:20px;text-decoration: none;position: absolute;cursor: pointer; margin:20px">${filname}</a> 
+      fil.innerHTML =   `<i class="fa fa-folder fa-3x" aria-hidden="true" style="color:lightblue;">
+      <a  style="color:black;font-size:15px;text-decoration: none;position: absolute;cursor: pointer; margin:20px;">${filname}</a> 
       </i>
       <i class="fa fa-trash fa-1.5px" onclick="deletefolder(${docid})" style="position:relative;left: 200px;bottom: 1px;">
   </i>`;

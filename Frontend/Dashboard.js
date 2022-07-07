@@ -41,10 +41,10 @@ for (var i = 0; i < list.length; i++) {
   }
 
 
-
     var foldername=document.getElementById("fname");
     var fn= document.getElementById("createbtn");
     fn.addEventListener("click",function(){
+     
          var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         fetch("http://localhost:58659/api/Folder",{
@@ -63,9 +63,8 @@ for (var i = 0; i < list.length; i++) {
         }).then(res=>{
             return res.text();
         }) .then(data=>console.log(data))
-       
         listFolders();
-        Location.reload();
+        location.reload();
         // .catch(error=>console.log(error))
     });
 
@@ -88,32 +87,19 @@ console.log(dashid);
 
     var foldercreate = document.getElementById("main");
     var fol = document.createElement("div");
-    
-    fol.style.width ="240px";
-    fol.style.height = "106px";
-    fol.style.margin="18px","18px","18px","18px";
-    fol.style.background = "white";
-    fol.style.display="inline-grid";
-    fol.style.padding="20px";
-    fol.style.borderRadius="20px";
-    fol.style.color="#618f61";
-    fol.style.boxShadow="silver";
-
-
-
-
-    // fol.setAttribute("id","stylefol");
-    // fol.setAttribute("style","height:100px","width:200px","background-color:blue","border-radius:12px","padding: 15px 14px");
+    fol.setAttribute("class","foldercs");
     const folname = folder.folderName;
     const foldid=folder.folderId;
     // fold.style.backgroundColor = "red";
     console.log(folname);
-    fol.innerHTML =   `<i class="fa fa-folder fa-3x" aria-hidden="true">
-    <a onclick="uploadfile(${foldid})" style="font-size:15px;text-decoration: none;position: absolute;cursor: pointer; margin:20px">${folname}</a> 
+    fol.innerHTML =   `
+    <i class="fa fa-folder fa-3x" aria-hidden="true" style="color:lightgrey;cursor:pointer;color:lightblue">
+    <a onclick="uploadfile(${foldid})" style="color:black;font-weight:normal;font-size:15px;text-decoration: none;position: absolute;cursor: pointer; margin:20px">${folname}</a> 
     </i>
-    <i class="fa fa-star" aria-hidden="true"onclick="favouritefolder(${foldid})" style="position:relative;left:10px;bottom:-14px;"></i>
-    <i class="fa fa-trash fa-1.5px" onclick="Trashfolder(${foldid})" style="position:relative;left: 180px;bottom: 3px;">
-  </i> `;
+    <i class="fa fa-trash fa-1.5px" onclick="swalfire(${foldid})" style="position:relative;left:130px;bottom:-15px;cursor:pointer;"></i>
+    <i class="fa fa-info-circle" style="position:relative;right: 15px;bottom: 1px;"></i>
+    <i class="fa fa-star-o" onclick="favorites(${foldid})" style="position:relative;left: 130px;bottom:90px;"></i>
+  `;
    foldercreate.appendChild(fol);
     });
   })
@@ -122,9 +108,9 @@ console.log(dashid);
   {
     console.log(err);
   }
-  
-}
 
+}
+// Trashfolder(${foldid})
 function onLoad() {
 
   listFolders();
@@ -133,6 +119,28 @@ function onLoad() {
 }
 
 onLoad();
+
+function swalfire(foldid){
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire(
+        Trashfolder(foldid),
+        'Deleted!',
+        'Your file has been deleted.',
+        'success',
+        
+      )
+    }
+  })
+}
 
 function Trashfolder(folder)
 {
@@ -149,6 +157,22 @@ function Trashfolder(folder)
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
     location.reload();
+}
+function favorites(folderid)
+{
+  var myHeaders = new Headers();
+  myHeaders.append("accept", "*/*");
+  
+  var requestOptions = {
+    method: 'PUT',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+  
+  fetch("http://localhost:58659/api/Folder/favourites?id="+folderid, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
 }
 function uploadfile(foId)
 {
@@ -194,9 +218,9 @@ fetch(`http://localhost:58659/api/Folder/folder/${dashid}/${searchcontent}`,
     const folname = folder.folderName;
     const foldid=folder.folderId;
     console.log(folname);
-    fol.innerHTML =   `<i class="fa fa-folder fa-2x" aria-hidden="true">
+    fol.innerHTML =   `<i class="fa fa-folder fa-2x" aria-hidden="true" style="color:lightblue;">
     <button class="addfile" onclick="uploadfile()"></button>
-    <a onclick="uploadfile()" style="font-size:15px;text-decoration: none;position: absolute;cursor: pointer; margin:20px">${folname}</a> 
+    <a onclick="uploadfile()" style="color:black;font-size:15px;text-decoration: none;position: absolute;cursor: pointer; margin:20px">${folname}</a> 
     </i>
   <i class="fa fa-trash fa-1.5x" onclick="deletefolder(${foldid})" style="position:relative;left: 190px;bottom: -6px;">
   </i> `;
