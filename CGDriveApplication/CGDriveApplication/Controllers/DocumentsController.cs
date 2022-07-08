@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,19 +18,67 @@ namespace CGDriveApplication.Controllers
     public class DocumentsController : ControllerBase
     {
         private readonly CG_DocsContext _cgDocument;
+        private readonly CG_DocsContext _cgfolder;
         private readonly IHostingEnvironment _environment;
-        public DocumentsController(CG_DocsContext cgDocument, IHostingEnvironment environment)
+        public DocumentsController(CG_DocsContext cgDocument, CG_DocsContext cgfolder, IHostingEnvironment environment)
         {
             _cgDocument = cgDocument;
+            _cgfolder = cgfolder;
             _environment = environment;
         }
-        [HttpGet("onlyfile")]
+        [HttpGet("Trashonlyfile")]
         public IActionResult GetTrashonlyfile(int id)
         {
-            var getDoc = _cgDocument.Documents.Where(obj => obj.DocId == id && obj.IsDeleted==true);
+            var getDoc = (from document in _cgDocument.Documents
+                         join folder in _cgfolder.Folder on document.FolDocId equals folder.FolderId
+                         where (document.IsDeleted == true && folder.IsDeleted == false && folder.FCreatedBy == id)
+                         select new Documents
+                         {
+                            DocId = document.DocId,
+                            DocName= document.DocName,
+                            ContentType= document.ContentType,
+                            Size= document.Size,
+                            FolDocId= document.FolDocId,
+                         }).ToList();
+            
             return Ok(getDoc);
         }
-        [HttpGet("{id:int}")]
+        [HttpGet("favoriteonlyfile")]
+        public IActionResult Getfavouriteonlyfile(int id)
+        {
+            var getfavDoc = (from document in _cgDocument.Documents
+                          join folder in _cgfolder.Folder on document.FolDocId equals folder.FolderId
+                          where (document.IsFavourite == true && folder.IsFavourite == false && folder.FCreatedBy == id)
+                          select new Documents
+                          {
+                              DocId = document.DocId,
+                              DocName = document.DocName,
+                              ContentType = document.ContentType,
+                              Size = document.Size,
+                              FolDocId = document.FolDocId,
+                          }).ToList();
+
+            return Ok(getfavDoc);
+        }
+        [HttpGet("Recentonlyfile")]
+        public IActionResult GetRecentonlyfile(int id)
+        {
+            var createdAt = DateTime.Now.AddMinutes(-30);
+            var getrecentDoc = (from document in _cgDocument.Documents
+                          join folder in _cgfolder.Folder on document.FolDocId equals folder.FolderId
+                          where (document.IsDeleted == false && document.DCreatedAt>=createdAt && document.DCreatedBy==id && folder.IsDeleted == false && folder.FCreatedAt<=createdAt)
+                          select new Documents
+                          {
+                              DocId = document.DocId,
+                              DocName = document.DocName,
+                              ContentType = document.ContentType,
+                              Size = document.Size,
+                              FolDocId = document.FolDocId,
+                          }).ToList();
+
+            return Ok(getrecentDoc);
+        }
+        [HttpGet("FolderFile")]
         public IActionResult Get(int id)
         {
             try
@@ -46,68 +95,7 @@ namespace CGDriveApplication.Controllers
                     "Error retrieving data from the database");
             }
         }
-        // GET: api/Documents
-        // [HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        // GET: api/Documents/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        // POST: api/Documents
-        [HttpPost]
-        public void Post([FromBody] DocumentRequestModel value)
-        {
-            var Documents = new Documents()
-            {
-                DocName = value.DocName,
-                ContentType = value.ContentType,
-                Size = value.Size,
-                DCreatedBy = value.DCreatedBy,
-                FolDocId = value.FolDocId
-            };
-            _cgDocument.Documents.Add(Documents);
-            _cgDocument.SaveChanges();
-        }
-        [HttpPost("upload/{folderid}/{createdby}/{createdAt}")]
-        public IActionResult Upload(List<IFormFile> files,int folderid,int createdby,DateTime createdAt) 
-            
-        {
-
-               long fsize = files.Sum(f => f.Length);
-            var RootPath = Path.Combine(_environment.ContentRootPath, "Resources", "Documents");
-
-            if (!Directory.Exists(RootPath))
-                Directory.CreateDirectory(RootPath);
-            foreach (var file in files)
-            {
-                var filePath = Path.Combine(RootPath, file.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                        var Documents = new Documents()
-                        {
-                            DocName = file.FileName,
-                            ContentType = file.ContentType,
-                            Size = (int)file.Length,
-                            FolDocId = folderid,
-                            DCreatedBy=createdby,
-                            DCreatedAt=createdAt
-
-                        };
-                    file.CopyTo(stream);
-                    _cgDocument.Documents.Add(Documents);
-                    _cgDocument.SaveChanges();
-                }
-            }
-            return Ok(new { count = files.Count, fsize });
-        }
-        [HttpGet("TrashDocId")]
+        [HttpGet("Trash")]
         public IActionResult TrashGetById(int id)
         {
             try
@@ -142,49 +130,63 @@ namespace CGDriveApplication.Controllers
                     "Error retrieving data from the database");
             }
         }
-        //[HttpPost]
-        //public IActionResult Download(int id)
-        //{
-        //    var Provider = new FileExtensionContentTypeProvider();
-        //    var document = _cgDocument.Documents.Find(id);
-        //    if (document == null)
-        //        return NotFound();
-        //    var file = Path.Combine(_environment.ContentRootPath, "Resources", "Documents", document.DocName);
-        //    if (!Provider.TryGetContentType(file, out string ContentType))
-        //    {
-        //        ContentType = "application/octet-stream";
-        //    }
-        //    byte[] fileBytes;
-        //    if (System.IO.File.Exists(file))
-        //    {
-        //        fileBytes = System.IO.File.ReadAllBytes(file);
-        //    }
-        //    else
-        //        return NotFound();
-        //    return File(fileBytes, ContentType, document.DocName);
-        //}
-        // PUT: api/Documents/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-        //[HttpGet("DocId")]
-        //public IActionResult GetById(int id)
-        //{
-        //    try
-        //    {
-        //        var result = _cgDocument.Documents.Where(obj => obj.DocId == id && obj.IsDeleted==false);
+        [HttpGet("RecentFolderFile")]
+        public IActionResult GetRecentFolderfile(int folderid)
+        {
+            var createdAt = DateTime.Now.AddMinutes(-30);
+            var res = _cgDocument.Documents.Where(o => o.DCreatedAt >= createdAt && o.FolDocId == folderid && o.IsDeleted == false);
+            return Ok(res);
+        }
 
-        //        if (result == null) return NotFound();
+        // POST: api/Documents
+        [HttpPost]
+        public void Post([FromBody] DocumentRequestModel value)
+        {
+            var Documents = new Documents()
+            {
+                DocName = value.DocName,
+                ContentType = value.ContentType,
+                Size = value.Size,
+                DCreatedBy = value.DCreatedBy,
+                FolDocId = value.FolDocId
+            };
+            _cgDocument.Documents.Add(Documents);
+            _cgDocument.SaveChanges();
+        }
+       
+        [HttpPost("upload/{folderid}/{createdby}/{createdAt}")]
+        public IActionResult Upload(List<IFormFile> files,int folderid,int createdby,DateTime createdAt) 
+            
+        {
 
-        //        return Ok(result);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //            "Error retrieving data from the database");
-        //    }
-        //}
+               long fsize = files.Sum(f => f.Length);
+            var RootPath = Path.Combine(_environment.ContentRootPath, "Resources", "Documents");
+
+            if (!Directory.Exists(RootPath))
+                Directory.CreateDirectory(RootPath);
+            foreach (var file in files)
+            {
+                var filePath = Path.Combine(RootPath, file.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                        var Documents = new Documents()
+                        {
+                            DocName = file.FileName,
+                            ContentType = file.ContentType,
+                            Size = (int)file.Length,
+                            FolDocId = folderid,
+                            DCreatedBy=createdby,
+                            DCreatedAt=createdAt
+
+                        };
+                    file.CopyTo(stream);
+                    _cgDocument.Documents.Add(Documents);
+                    _cgDocument.SaveChanges();
+                }
+            }
+            return Ok(new { count = files.Count, fsize });
+        }
+
 
 
 
@@ -194,10 +196,38 @@ namespace CGDriveApplication.Controllers
         {
             var upfile = _cgDocument.Documents.FirstOrDefault(o => o.DocId == id);
             upfile.IsDeleted = true;
+            if (upfile.IsFavourite == true)
+            {
+                upfile.IsFavourite = false;
+            }
             _cgDocument.Documents.Update(upfile);
             _cgDocument.SaveChanges();
         }
-
+        [HttpPut("Filerestore")]
+        public void Putfilerestore(int id)
+        {
+            var restorefile = _cgDocument.Documents.FirstOrDefault(o => o.DocId == id);
+            restorefile.IsDeleted = false;
+            _cgDocument.Documents.Update(restorefile);
+            _cgDocument.SaveChanges();
+        }
+        [HttpPut("Filefavourite")]
+        public void Putfilefavourite(int id)
+        {
+            var favouritefile = _cgDocument.Documents.FirstOrDefault(o => o.DocId == id);
+            if(favouritefile.IsDeleted!=true)
+            favouritefile.IsFavourite = true;
+            _cgDocument.Documents.Update(favouritefile);
+            _cgDocument.SaveChanges();
+        }
+        [HttpPut("Fileunfavourite")]
+        public void Putfileunfavourite(int id)
+        {
+            var unfavouritefile = _cgDocument.Documents.FirstOrDefault(o => o.DocId == id);
+            unfavouritefile.IsFavourite =false;
+            _cgDocument.Documents.Update(unfavouritefile);
+            _cgDocument.SaveChanges();
+        }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]

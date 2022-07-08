@@ -4,14 +4,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+    <script
+      src="https://kit.fontawesome.com/4beff64e3f.js"
       crossorigin="anonymous"
-    />
+    ></script>
 
-    <link rel="stylesheet" href="Dashboard.css" />
+    <link rel="stylesheet" href="file.css" />
     <title>CGDocs</title>
   </head>
 
@@ -31,37 +29,43 @@
           />
           <label for="search"><i class="fas fa-search"></i></label>
         </div>
-        <i class="fas fa-bell"></i>
+        <i class="fa fa-user fa-2x"></i>
         <span
           id="usertext"
-          style="color: black; float: right; margin-left: 15px"
+          style="
+            color: black;
+            float: right;
+            margin-left: 15px;
+            font-size: larger;
+          "
         ></span>
+        </div>
       </div>
-      <div class="sidebar" id="side">
+      <div class="sidebar">
         <ul>
-          <li class="List">
+          <li>
             <a href="Dashboard.html">
               <i class="fas fa-th-large"></i>
               <div>Dashboard</div>
             </a>
           </li>
-          <li class="List">
-            <a href="trashfolder.html">
-              <i class="fas fa-trash"></i>
-              <div>Folder</div>
+          <li>
+            <a href="index.html">
+              <i class="fas fa-home"></i>
+              <div>Homepage</div>
             </a>
           </li>
-          <li class="List">
-            <a href="login.html">
-              <i class="fas fa-question"></i>
-              <div onclick="logout()">Log Out</div>
+          <li>
+            <a href="trash.html">
+              <i class="fas fa-trash"></i>
+              <div>Trash</div>
             </a>
           </li>
         </ul>
       </div>
-      <div id="main"></div>
+      <div id="filemain"></div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
-    <script src="onlytrashfile.js"></script>
+
+    <script src="recentfile.js"></script>
   </body>
 </html>

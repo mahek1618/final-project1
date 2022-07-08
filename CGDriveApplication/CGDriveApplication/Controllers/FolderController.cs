@@ -73,7 +73,7 @@ namespace CGDriveApplication.Controllers
         }
 
         // PUT: api/Folder/5
-        [HttpPut("{id}")]
+        [HttpPut("trashdelete")]
         public void Put(int id)
         {
             var upfil = _cgDocument.Documents.Where(o => o.FolDocId == id).ToList();
@@ -116,12 +116,28 @@ namespace CGDriveApplication.Controllers
             var favfil = _cgDocument.Documents.Where(o => o.FolDocId == id).ToList();
             foreach (var res in favfil)
             {
+                if(res.IsDeleted!=true)
                 res.IsFavourite = true;
                 _cgDocument.SaveChanges();
             }
             var favfol = _cgfolder.Folder.FirstOrDefault(o => o.FolderId == id);
+            if(favfol.IsDeleted!=true)
             favfol.IsFavourite = true;
             _cgfolder.Folder.Update(favfol);
+            _cgfolder.SaveChanges();
+        }
+        [HttpPut("Unfavourites")]
+        public void PutUnFav(int id)
+        {
+            var unfavfil = _cgDocument.Documents.Where(o => o.FolDocId == id).ToList();
+            foreach (var res in unfavfil)
+            {
+                res.IsFavourite = false;
+                _cgDocument.SaveChanges();
+            }
+            var unfavfol = _cgfolder.Folder.FirstOrDefault(o => o.FolderId == id);
+            unfavfol.IsFavourite = false;
+            _cgfolder.Folder.Update(unfavfol);
             _cgfolder.SaveChanges();
         }
         // DELETE: api/ApiWithActions/5

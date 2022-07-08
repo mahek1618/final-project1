@@ -21,45 +21,31 @@
                 <input type="text" name="search" placeholder="search here"id="search" oninput="search()">
                 <label for="search"><i class="fas fa-search"></i></label>
             </div>
-            <i class="fas fa-bell"></i>
-            <div class="user">
-                <span id="usertext" style="color:black;float:right;margin-left: 15px;"></span>
+            <i class="fa fa-user fa-2x"></i>
+            <span
+              id="usertext"
+              style="
+                color: black;
+                float: right;
+                margin-left: 15px;
+                font-size: larger;
+              "
+            ></span>
             </div>
         </div>
         <div class="sidebar">
-             <!-- <div class="box">
-                <button id="trigger">  + Upload File </button>
-                <div class="modal">
-                  <div class="modal-content">
-                    <span class="close-button">×</span>
-                    <form>
-                     
-                      <input type="file" id="myfile">
-
-                     <button type="button" id="createfilebtn" onclick="uploadfile()"> Upload File</button>
-
-                    </form>
-
-                </div>
-</div>
-</div>    -->
+    
             <ul>
                 <li>
-                    <a href="#">
+                    <a href="Dashboard.html">
                         <i class="fas fa-th-large"></i>
                         <div>Dashboard</div>
                     </a>
                 </li>
               <li>
-                    <a href="trashFolder.html">
+                    <a href="trash.html">
                         <i class="fas fa-trash"></i>
-                        <div>Folder</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fas fa-question"></i>
-                        <div onclick="logout()">Log Out</div>
+                        <div>Trash</div>
                     </a>
                 </li>
             </ul>
